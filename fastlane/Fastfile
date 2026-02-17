@@ -1,0 +1,6 @@
+lane :test do
+  mad(
+    api_key: "your_api_key",
+    ipa: "./path/to/app.ipa"
+  )
+end
