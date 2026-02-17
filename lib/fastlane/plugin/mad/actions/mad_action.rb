@@ -197,7 +197,7 @@ module Fastlane
           FastlaneCore::ConfigItem.new(key: :upload_url,
                                        env_name: "FL_MAD_UPLOAD_URL",
                                        description: "API URL for MAD",
-                                       default_value: "http://localhost.testfairy.net",
+                                       default_value: "https://app.testfairy.com",
                                        optional: true),
           FastlaneCore::ConfigItem.new(key: :testers_groups,
                                        optional: true,

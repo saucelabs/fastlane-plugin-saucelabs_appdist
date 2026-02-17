@@ -48,7 +48,7 @@ describe Fastlane::Actions::MadAction do
 
     it 'has the correct default upload_url' do
       upload_url_option = Fastlane::Actions::MadAction.available_options.find { |o| o.key == :upload_url }
-      expect(upload_url_option.default_value).to eq('http://localhost.testfairy.net')
+      expect(upload_url_option.default_value).to eq('https://app.testfairy.com')
     end
   end
 

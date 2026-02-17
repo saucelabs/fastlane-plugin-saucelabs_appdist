@@ -28,7 +28,7 @@ mad(
 | `ipa` | Path to your IPA file (iOS) | — |
 | `apk` | Path to your APK file (Android) | — |
 | `symbols_file` | Symbols mapping file | — |
-| `upload_url` | API URL for MAD | `http://localhost.testfairy.net` |
+| `upload_url` | API URL for MAD | `https://app.testfairy.com` |
 | `testers_groups` | Array of tester groups | `[]` |
 | `metrics` | Array of metrics to record | `[]` |
 | `comment` | Additional release notes | `No comment provided` |
