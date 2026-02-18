@@ -4,10 +4,14 @@ Upload builds to MAD (TestFairy-compatible upload endpoint).
 
 ## Installation
 
-Add the plugin to your project's `Pluginfile`:
+```sh
+fastlane add_plugin mad
+```
+
+Or add the plugin manually to your project's `Pluginfile`:
 
 ```ruby
-gem 'fastlane-plugin-mad', path: '/path/to/fastlane-plugin-mad'
+gem 'fastlane-plugin-mad'
 ```
 
 ## Usage
