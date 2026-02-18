@@ -5,11 +5,11 @@ require 'fastlane/plugin/mad/version'
 Gem::Specification.new do |spec|
   spec.name          = 'fastlane-plugin-mad'
   spec.version       = Fastlane::Mad::VERSION
-  spec.author        = 'Simon Sarrafi'
-  spec.email         = 'simon@example.com'
+  spec.author        = 'Sauce Labs'
+  spec.email         = 'mobileappdistribution@saucelabs.com'
 
   spec.summary       = 'Upload builds to MAD (TestFairy-compatible)'
-  spec.homepage      = 'https://github.com/example/fastlane-plugin-mad'
+  spec.homepage      = 'https://saucelabs.com/products/mobile-testing/app-betas'
   spec.license       = 'MIT'
 
   spec.files         = Dir["lib/**/*"] + %w(README.md LICENSE)
