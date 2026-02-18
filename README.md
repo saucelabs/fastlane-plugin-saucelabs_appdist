@@ -46,3 +46,19 @@ mad(
 | `landing_page_mode` | Landing page visibility (`open`/`closed`) | `open` |
 | `upload_to_saucelabs` | Upload to Sauce Labs (`on`/`off`) | `off` |
 | `platform` | Platform override | `""` |
+
+## Response
+
+| Key | Description |
+|-----|-------------|
+| `MAD_BUILD_URL` | URL for the sessions of the newly uploaded build |
+| `MAD_DOWNLOAD_URL` | URL directly to the newly uploaded build |
+| `MAD_LANDING_PAGE` | URL of the build's landing page |
+
+These values are set in `lane_context` and can be accessed in subsequent lanes:
+
+```ruby
+lane_context[SharedValues::MAD_BUILD_URL]
+lane_context[SharedValues::MAD_DOWNLOAD_URL]
+lane_context[SharedValues::MAD_LANDING_PAGE]
+```
