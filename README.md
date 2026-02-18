@@ -46,3 +46,22 @@ mad(
 | `landing_page_mode` | Landing page visibility (`open`/`closed`) | `open` |
 | `upload_to_saucelabs` | Upload to Sauce Labs (`on`/`off`) | `off` |
 | `platform` | Platform override | `""` |
+
+## Publishing a New Version
+
+1. Update the version number in `lib/fastlane/plugin/mad/version.rb`.
+
+2. Build the gem:
+   ```sh
+   gem build fastlane-plugin-mad.gemspec
+   ```
+
+3. Push to RubyGems:
+   ```sh
+   gem push fastlane-plugin-mad-<version>.gem
+   ```
+
+4. Clients can then update to the new version:
+   ```sh
+   bundle update fastlane-plugin-mad
+   ```
