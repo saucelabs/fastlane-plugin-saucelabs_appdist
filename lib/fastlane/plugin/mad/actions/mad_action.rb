@@ -116,8 +116,8 @@ module Fastlane
 
         response = self.upload_build(params[:upload_url], path, client_options, params[:timeout])
         if parse_response(response)
-          UI.success("MAD_UPLOAD_RESPONSE: #{Actions.lane_context[SharedValues::MAD_UPLOAD_RESPONSE].to_json}")
           UI.success("Build successfully uploaded to MAD.")
+          UI.success("Response:\n#{JSON.pretty_generate(Actions.lane_context[SharedValues::MAD_UPLOAD_RESPONSE])}")
         else
           UI.user_error!("Error when trying to upload ipa to MAD")
         end
