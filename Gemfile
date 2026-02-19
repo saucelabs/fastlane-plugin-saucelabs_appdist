@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
 
-gemspec
+gemspec name: 'fastlane-plugin-saucelabs_appdist'
 
 gem 'fastlane', path: '/Users/simon.sarrafi/Projects/fastlane'

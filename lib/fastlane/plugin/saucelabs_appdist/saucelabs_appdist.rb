@@ -1,13 +1,13 @@
-require 'fastlane/plugin/mad/version'
+require 'fastlane/plugin/saucelabs_appdist/version'
 
 module Fastlane
-  module Mad
+  module SaucelabsAppdist
     def self.all_classes
       Dir[File.expand_path('**/{actions,helper}/*.rb', File.dirname(__FILE__))]
     end
   end
 end
 
-Fastlane::Mad.all_classes.each do |current|
+Fastlane::SaucelabsAppdist.all_classes.each do |current|
   require current
 end

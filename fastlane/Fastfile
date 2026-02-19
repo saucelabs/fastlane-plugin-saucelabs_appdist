@@ -1,5 +1,5 @@
 lane :test do
-  mad(
+  saucelabs_appdist(
     api_key: "your_api_key",
     ipa: "./path/to/app.ipa"
   )

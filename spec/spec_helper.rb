@@ -8,4 +8,4 @@ end
 
 Fastlane.load_actions
 
-require 'fastlane/plugin/mad/mad'
+require 'fastlane/plugin/saucelabs_appdist/saucelabs_appdist'

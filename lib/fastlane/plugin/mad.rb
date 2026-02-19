@@ -1,1 +1,0 @@
-require 'fastlane/plugin/mad/mad'

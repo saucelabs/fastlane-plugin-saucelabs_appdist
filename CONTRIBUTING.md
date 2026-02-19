@@ -1,4 +1,4 @@
-# Contributing to fastlane-plugin-mad
+# Contributing to fastlane-plugin-saucelabs_appdist
 
 ## Development Setup
 
@@ -16,19 +16,19 @@
 
 ## Publishing a New Version
 
-1. Update the version number in `lib/fastlane/plugin/mad/version.rb`.
+1. Update the version number in `lib/fastlane/plugin/saucelabs_appdist/version.rb`.
 
 2. Build the gem:
    ```sh
-   gem build fastlane-plugin-mad.gemspec
+   gem build fastlane-plugin-saucelabs_appdist.gemspec
    ```
 
 3. Push to RubyGems:
    ```sh
-   gem push fastlane-plugin-mad-<version>.gem
+   gem push fastlane-plugin-saucelabs_appdist-<version>.gem
    ```
 
 4. Clients can then update to the new version:
    ```sh
-   bundle update fastlane-plugin-mad
+   bundle update fastlane-plugin-saucelabs_appdist
    ```

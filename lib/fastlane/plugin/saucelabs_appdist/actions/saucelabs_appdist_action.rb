@@ -1,10 +1,10 @@
 module Fastlane
   module Actions
     module SharedValues
-      MAD_UPLOAD_RESPONSE = :MAD_UPLOAD_RESPONSE
+      SAUCELABS_APPDIST_UPLOAD_RESPONSE = :SAUCELABS_APPDIST_UPLOAD_RESPONSE
     end
 
-    class MadAction < Action
+    class SaucelabsAppdistAction < Action
       def self.upload_build(upload_url, ipa, options, timeout)
         require 'faraday'
         require 'faraday_middleware'
@@ -34,12 +34,12 @@ module Fastlane
             req.body = options
           end
         rescue Faraday::TimeoutError
-          UI.crash!("Uploading build to MAD timed out ⏳")
+          UI.crash!("Uploading build to Sauce Labs App Distribution timed out ⏳")
         end
       end
 
       def self.run(params)
-        UI.success('Starting with ipa upload to MAD...')
+        UI.success('Starting with ipa upload to Sauce Labs App Distribution...')
 
         metrics_to_client = lambda do |metrics|
           metrics.map do |metric|
@@ -116,20 +116,20 @@ module Fastlane
 
         response = self.upload_build(params[:upload_url], path, client_options, params[:timeout])
         if parse_response(response)
-          UI.success("Build successfully uploaded to MAD.")
-          UI.success("Response:\n#{JSON.pretty_generate(Actions.lane_context[SharedValues::MAD_UPLOAD_RESPONSE])}")
+          UI.success("Build successfully uploaded to Sauce Labs App Distribution.")
+          UI.success("Response:\n#{JSON.pretty_generate(Actions.lane_context[SharedValues::SAUCELABS_APPDIST_UPLOAD_RESPONSE])}")
         else
-          UI.user_error!("Error when trying to upload ipa to MAD")
+          UI.user_error!("Error when trying to upload ipa to Sauce Labs App Distribution")
         end
       end
 
       def self.parse_response(response)
         if response.body && response.body.key?('status') && response.body['status'] == 'ok'
-          Actions.lane_context[SharedValues::MAD_UPLOAD_RESPONSE] = response.body
+          Actions.lane_context[SharedValues::SAUCELABS_APPDIST_UPLOAD_RESPONSE] = response.body
 
           return true
         else
-          UI.error("Error uploading to MAD: #{response.body}")
+          UI.error("Error uploading to Sauce Labs App Distribution: #{response.body}")
 
           return false
         end
@@ -137,25 +137,25 @@ module Fastlane
       private_class_method :parse_response
 
       def self.description
-        'Upload a new build to MAD'
+        'Upload a new build to Sauce Labs App Distribution'
       end
 
       def self.details
-        'Upload a new build to MAD (TestFairy-compatible upload endpoint).'
+        'A Sauce Labs fastlane plugin for uploading iOS and Android builds to Mobile App Distribution (MAD).'
       end
 
       def self.available_options
         [
           # required
           FastlaneCore::ConfigItem.new(key: :api_key,
-                                       env_name: "FL_MAD_API_KEY",
-                                       description: "API Key for MAD",
+                                       env_name: "FL_SAUCELABS_APPDIST_API_KEY",
+                                       description: "API Key for Sauce Labs App Distribution",
                                        sensitive: true,
                                        verify_block: proc do |value|
-                                         UI.user_error!("No API key for MAD given, pass using `api_key: 'key'`") unless value.to_s.length > 0
+                                         UI.user_error!("No API key for Sauce Labs App Distribution given, pass using `api_key: 'key'`") unless value.to_s.length > 0
                                        end),
           FastlaneCore::ConfigItem.new(key: :ipa,
-                                       env_name: 'MAD_IPA_PATH',
+                                       env_name: 'SAUCELABS_APPDIST_IPA_PATH',
                                        description: 'Path to your IPA file for iOS',
                                        default_value: Actions.lane_context[SharedValues::IPA_OUTPUT_PATH],
                                        default_value_dynamic: true,
@@ -165,7 +165,7 @@ module Fastlane
                                          UI.user_error!("Couldn't find ipa file at path '#{value}'") unless File.exist?(value)
                                        end),
           FastlaneCore::ConfigItem.new(key: :apk,
-                                       env_name: 'MAD_APK_PATH',
+                                       env_name: 'SAUCELABS_APPDIST_APK_PATH',
                                        description: 'Path to your APK file for Android',
                                        default_value: Actions.lane_context[SharedValues::GRADLE_APK_OUTPUT_PATH],
                                        default_value_dynamic: true,
@@ -177,7 +177,7 @@ module Fastlane
           # optional
           FastlaneCore::ConfigItem.new(key: :symbols_file,
                                        optional: true,
-                                       env_name: "FL_MAD_SYMBOLS_FILE",
+                                       env_name: "FL_SAUCELABS_APPDIST_SYMBOLS_FILE",
                                        description: "Symbols mapping file",
                                        default_value: Actions.lane_context[SharedValues::DSYM_OUTPUT_PATH],
                                        default_value_dynamic: true,
@@ -185,68 +185,68 @@ module Fastlane
                                          UI.user_error!("Couldn't find dSYM file at path '#{value}'") unless File.exist?(value)
                                        end),
           FastlaneCore::ConfigItem.new(key: :upload_url,
-                                       env_name: "FL_MAD_UPLOAD_URL",
-                                       description: "API URL for MAD",
+                                       env_name: "FL_SAUCELABS_APPDIST_UPLOAD_URL",
+                                       description: "API URL for Sauce Labs App Distribution",
                                        default_value: "https://app.testfairy.com",
                                        optional: true),
           FastlaneCore::ConfigItem.new(key: :testers_groups,
                                        optional: true,
                                        type: Array,
                                        short_option: '-g',
-                                       env_name: "FL_MAD_TESTERS_GROUPS",
+                                       env_name: "FL_SAUCELABS_APPDIST_TESTERS_GROUPS",
                                        description: "Array of tester groups to be notified",
                                        default_value: []),
           FastlaneCore::ConfigItem.new(key: :metrics,
                                        optional: true,
                                        type: Array,
-                                       env_name: "FL_MAD_METRICS",
+                                       env_name: "FL_SAUCELABS_APPDIST_METRICS",
                                        description: "Array of metrics to record (cpu,memory,network,phone_signal,gps,battery,mic,wifi)",
                                        default_value: []),
           FastlaneCore::ConfigItem.new(key: :comment,
                                        optional: true,
-                                       env_name: "FL_MAD_COMMENT",
+                                       env_name: "FL_SAUCELABS_APPDIST_COMMENT",
                                        description: "Additional release notes for this upload. This text will be added to email notifications",
                                        default_value: 'No comment provided'),
           FastlaneCore::ConfigItem.new(key: :auto_update,
                                        optional: true,
-                                       env_name: "FL_MAD_AUTO_UPDATE",
+                                       env_name: "FL_SAUCELABS_APPDIST_AUTO_UPDATE",
                                        description: "Allows an easy upgrade of all users to the current version. To enable set to 'on'",
                                        default_value: 'off'),
           FastlaneCore::ConfigItem.new(key: :notify,
                                        optional: true,
-                                       env_name: "FL_MAD_NOTIFY",
+                                       env_name: "FL_SAUCELABS_APPDIST_NOTIFY",
                                        description: "Send email to testers",
                                        default_value: 'off'),
           FastlaneCore::ConfigItem.new(key: :options,
                                        optional: true,
                                        type: Array,
-                                       env_name: "FL_MAD_OPTIONS",
+                                       env_name: "FL_SAUCELABS_APPDIST_OPTIONS",
                                        description: "Array of options (shake,video_only_wifi,anonymous)",
                                        default_value: []),
           FastlaneCore::ConfigItem.new(key: :custom,
                                        optional: true,
-                                       env_name: "FL_MAD_CUSTOM",
+                                       env_name: "FL_SAUCELABS_APPDIST_CUSTOM",
                                        description: "Array of custom options. Contact support for more information",
                                        default_value: ''),
           FastlaneCore::ConfigItem.new(key: :timeout,
-                                       env_name: "FL_MAD_TIMEOUT",
+                                       env_name: "FL_SAUCELABS_APPDIST_TIMEOUT",
                                        description: "Request timeout in seconds",
                                        type: Integer,
                                        optional: true),
           FastlaneCore::ConfigItem.new(key: :tags,
                                        optional: true,
-                                       env_name: "FL_MAD_TAGS",
+                                       env_name: "FL_SAUCELABS_APPDIST_TAGS",
                                        description: "Custom tags that can be used to organize your builds",
                                        type: Array,
                                        default_value: []),
           FastlaneCore::ConfigItem.new(key: :folder_name,
                                        optional: true,
-                                       env_name: "FL_MAD_FOLDER_NAME",
+                                       env_name: "FL_SAUCELABS_APPDIST_FOLDER_NAME",
                                        description: "Name of the dashboard folder that contains this app",
                                        default_value: ''),
           FastlaneCore::ConfigItem.new(key: :landing_page_mode,
                                        optional: true,
-                                       env_name: "FL_MAD_LANDING_PAGE_MODE",
+                                       env_name: "FL_SAUCELABS_APPDIST_LANDING_PAGE_MODE",
                                        description: "Visibility of build landing after upload. Can be 'open' or 'closed'",
                                        default_value: 'open',
                                        verify_block: proc do |value|
@@ -254,7 +254,7 @@ module Fastlane
                                        end),
           FastlaneCore::ConfigItem.new(key: :upload_to_saucelabs,
                                        optional: true,
-                                       env_name: "FL_MAD_UPLOAD_TO_SAUCELABS",
+                                       env_name: "FL_SAUCELABS_APPDIST_UPLOAD_TO_SAUCELABS",
                                        description: "Upload file directly to Sauce Labs. It can be 'on' or 'off'",
                                        default_value: 'off',
                                        verify_block: proc do |value|
@@ -262,7 +262,7 @@ module Fastlane
                                        end),
           FastlaneCore::ConfigItem.new(key: :platform,
                                        optional: true,
-                                       env_name: "FL_MAD_PLATFORM",
+                                       env_name: "FL_SAUCELABS_APPDIST_PLATFORM",
                                        description: "Use if upload build is not iOS or Android. Contact support for more information",
                                        default_value: '')
         ]
@@ -270,12 +270,12 @@ module Fastlane
 
       def self.example_code
         [
-          'mad(
+          'saucelabs_appdist(
             api_key: "...",
             ipa: "./ipa_file.ipa",
             comment: "Build #{lane_context[SharedValues::BUILD_NUMBER]}",
           )',
-          'mad(
+          'saucelabs_appdist(
             api_key: "...",
             apk: "../build/app/outputs/apk/qa/release/app-qa-release.apk",
             comment: "Build #{lane_context[SharedValues::BUILD_NUMBER]}",
@@ -289,12 +289,12 @@ module Fastlane
 
       def self.output
         [
-          ['MAD_UPLOAD_RESPONSE', 'Full response from the upload API']
+          ['SAUCELABS_APPDIST_UPLOAD_RESPONSE', 'Full response from the upload API']
         ]
       end
 
       def self.authors
-        ["mad"]
+        ["Sauce Labs"]
       end
 
       def self.is_supported?(platform)
