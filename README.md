@@ -49,16 +49,36 @@ mad(
 
 ## Response
 
-| Key | Description |
-|-----|-------------|
-| `MAD_BUILD_URL` | URL for the sessions of the newly uploaded build |
-| `MAD_DOWNLOAD_URL` | URL directly to the newly uploaded build |
-| `MAD_LANDING_PAGE` | URL of the build's landing page |
-
-These values are set in `lane_context` and can be accessed in subsequent lanes:
+The `MAD_UPLOAD_RESPONSE` shared value contains the full JSON response from the upload API. It is set in `lane_context` and can be accessed in subsequent lanes:
 
 ```ruby
-lane_context[SharedValues::MAD_BUILD_URL]
-lane_context[SharedValues::MAD_DOWNLOAD_URL]
-lane_context[SharedValues::MAD_LANDING_PAGE]
+lane_context[SharedValues::MAD_UPLOAD_RESPONSE]
+```
+
+Example response:
+
+```json
+{
+  "status": "ok",
+  "build_id": "1",
+  "project_id": "1",
+  "app_name": "My Demo App",
+  "app_version": "2.0.2 - 2026-02-19 02:51:05",
+  "file_size": 2319620,
+  "build_url": "https://app.testfairy.com/projects/1/builds/1",
+  "download_page_url": "https://app.testfairy.com/join/xxxxxx",
+  "app_url": "https://app.testfairy.com/download/.../getapp",
+  "invite_testers_url": "https://app.testfairy.com/projects/1/builds/1/invite",
+  "icon_url": "https://app.testfairy.com/icons/.../icon.png",
+  "options": "video-quality=medium,screenshot-interval=1,session-length=60m,video,logcat,shake,cpu,memory,phone-signal,battery,wifi",
+  "platform": "iOS",
+  "tags": [],
+  "metadata": [],
+  "has_testfairy_sdk": true,
+  "symbols_download_url": null,
+  "attachments": null,
+  "landing_page_url": "https://app.testfairy.com/join/xxxxxx",
+  "build_specific_landing_page_url": "https://app.testfairy.com/join/xxxxxx?id=1",
+  "landing_page_mode": "closed"
+}
 ```

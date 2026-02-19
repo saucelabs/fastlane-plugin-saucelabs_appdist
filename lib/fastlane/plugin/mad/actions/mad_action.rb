@@ -1,9 +1,7 @@
 module Fastlane
   module Actions
     module SharedValues
-      MAD_BUILD_URL = :MAD_BUILD_URL
-      MAD_DOWNLOAD_URL = :MAD_DOWNLOAD_URL
-      MAD_LANDING_PAGE = :MAD_LANDING_PAGE
+      MAD_UPLOAD_RESPONSE = :MAD_UPLOAD_RESPONSE
     end
 
     class MadAction < Action
@@ -118,9 +116,7 @@ module Fastlane
 
         response = self.upload_build(params[:upload_url], path, client_options, params[:timeout])
         if parse_response(response)
-          UI.success("Build URL: #{Actions.lane_context[SharedValues::MAD_BUILD_URL]}")
-          UI.success("Download URL: #{Actions.lane_context[SharedValues::MAD_DOWNLOAD_URL]}")
-          UI.success("Landing Page URL: #{Actions.lane_context[SharedValues::MAD_LANDING_PAGE]}")
+          UI.success("MAD_UPLOAD_RESPONSE: #{Actions.lane_context[SharedValues::MAD_UPLOAD_RESPONSE].to_json}")
           UI.success("Build successfully uploaded to MAD.")
         else
           UI.user_error!("Error when trying to upload ipa to MAD")
@@ -129,13 +125,7 @@ module Fastlane
 
       def self.parse_response(response)
         if response.body && response.body.key?('status') && response.body['status'] == 'ok'
-          build_url = response.body['build_url']
-          app_url = response.body['app_url']
-          landing_page_url = response.body['landing_page_url']
-
-          Actions.lane_context[SharedValues::MAD_BUILD_URL] = build_url
-          Actions.lane_context[SharedValues::MAD_DOWNLOAD_URL] = app_url
-          Actions.lane_context[SharedValues::MAD_LANDING_PAGE] = landing_page_url
+          Actions.lane_context[SharedValues::MAD_UPLOAD_RESPONSE] = response.body
 
           return true
         else
@@ -299,9 +289,7 @@ module Fastlane
 
       def self.output
         [
-          ['MAD_BUILD_URL', 'URL for the sessions of the newly uploaded build'],
-          ['MAD_DOWNLOAD_URL', 'URL directly to the newly uploaded build'],
-          ['MAD_LANDING_PAGE', "URL of the build's landing page"]
+          ['MAD_UPLOAD_RESPONSE', 'Full response from the upload API']
         ]
       end
 
