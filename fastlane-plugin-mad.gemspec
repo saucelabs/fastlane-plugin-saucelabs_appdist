@@ -8,7 +8,8 @@ Gem::Specification.new do |spec|
   spec.author        = 'Sauce Labs'
   spec.email         = 'mobileappdistribution@saucelabs.com'
 
-  spec.summary       = 'Upload builds to MAD (TestFairy-compatible)'
+  spec.summary       = 'Sauce Labs plugin for uploading builds to Mobile App Distribution (MAD)'
+  spec.description   = 'A Sauce Labs fastlane plugin for uploading iOS and Android builds to Mobile App Distribution (MAD).'
   spec.homepage      = 'https://saucelabs.com/products/mobile-testing/app-betas'
   spec.license       = 'MIT'
 

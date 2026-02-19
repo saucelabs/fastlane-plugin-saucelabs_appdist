@@ -1,6 +1,11 @@
 # fastlane-plugin-mad
 
-Upload builds to MAD (TestFairy-compatible upload endpoint).
+[![Gem Version](https://badge.fury.io/rb/fastlane-plugin-mad.svg)](https://rubygems.org/gems/fastlane-plugin-mad)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
+A [Sauce Labs](https://saucelabs.com) fastlane plugin for uploading builds to **Mobile App Distribution (MAD)**.
+
+For more information about Sauce Labs Mobile App Distribution, see the [product page](https://saucelabs.com/products/mobile-testing/app-betas).
 
 ## Installation
 
