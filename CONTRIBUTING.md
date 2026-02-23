@@ -4,7 +4,7 @@
 
 1. Clone the repo and install dependencies:
    ```sh
-   git clone git@gitlab.tools.saucelabs.net:saucelabs/mad/fastlane-plugin-saucelabs_appdist.git
+   git clone https://github.com/saucelabs/fastlane-plugin-saucelabs_appdist.git
    cd fastlane-plugin-saucelabs_appdist
    bundle install
    ```
