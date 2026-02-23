@@ -10,8 +10,13 @@ Gem::Specification.new do |spec|
 
   spec.summary       = 'Sauce Labs plugin for uploading builds to Mobile App Distribution'
   spec.description   = 'A Sauce Labs fastlane plugin for uploading iOS and Android builds to Mobile App Distribution.'
-  spec.homepage      = 'https://saucelabs.com/products/mobile-testing/app-betas'
+  spec.homepage      = 'https://github.com/saucelabs/fastlane-plugin-saucelabs_appdist'
   spec.license       = 'MIT'
+
+  spec.metadata      = {
+    'source_code_uri' => 'https://github.com/saucelabs/fastlane-plugin-saucelabs_appdist',
+    'bug_tracker_uri' => 'https://github.com/saucelabs/fastlane-plugin-saucelabs_appdist/issues'
+  }
 
   spec.files         = Dir["lib/**/*"] + %w(README.md LICENSE)
   spec.require_paths = ['lib']
