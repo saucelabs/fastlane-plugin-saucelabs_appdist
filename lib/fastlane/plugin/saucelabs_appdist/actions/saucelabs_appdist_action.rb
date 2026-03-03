@@ -106,7 +106,7 @@ module Fastlane
             [key, value]
           when :community_token
             [key, value]
-          when :add_description
+          when :app_description
             [key, value]
           else
             UI.user_error!("Unknown parameter: #{key}")
@@ -274,9 +274,9 @@ module Fastlane
                                        env_name: "FL_SAUCELABS_APPDIST_COMMUNITY_TOKEN",
                                        description: "Custom URL token for the landing page",
                                        default_value: ''),
-          FastlaneCore::ConfigItem.new(key: :add_description,
+          FastlaneCore::ConfigItem.new(key: :app_description,
                                        optional: true,
-                                       env_name: "FL_SAUCELABS_APPDIST_ADD_DESCRIPTION",
+                                       env_name: "FL_SAUCELABS_APPDIST_APP_DESCRIPTION",
                                        description: "Description text to display on the landing page",
                                        default_value: '')
         ]
