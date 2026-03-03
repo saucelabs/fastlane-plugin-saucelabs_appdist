@@ -51,6 +51,8 @@ saucelabs_appdist(
 | `landing_page_mode` | Landing page visibility (`open`/`closed`) | `open` |
 | `upload_to_saucelabs` | Upload to Sauce Labs (`on`/`off`) | `off` |
 | `platform` | Platform override | `""` |
+| `community_token` | Custom URL token for the landing page | `""` |
+| `add_description` | Description text to display on the landing page | `""` |
 
 ## Response
 
