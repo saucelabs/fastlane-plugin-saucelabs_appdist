@@ -43,7 +43,7 @@ describe Fastlane::Actions::SaucelabsAppdistAction do
 
   describe '#available_options' do
     it 'has the expected number of options' do
-      expect(Fastlane::Actions::SaucelabsAppdistAction.available_options.length).to eq(18)
+      expect(Fastlane::Actions::SaucelabsAppdistAction.available_options.length).to eq(20)
     end
 
     it 'has the correct default upload_url' do

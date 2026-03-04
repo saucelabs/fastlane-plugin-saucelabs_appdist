@@ -104,6 +104,10 @@ module Fastlane
             [key, value]
           when :platform
             [key, value]
+          when :community_token
+            [key, value]
+          when :app_description
+            [key, value]
           else
             UI.user_error!("Unknown parameter: #{key}")
           end
@@ -264,6 +268,16 @@ module Fastlane
                                        optional: true,
                                        env_name: "FL_SAUCELABS_APPDIST_PLATFORM",
                                        description: "Use if upload build is not iOS or Android. Contact support for more information",
+                                       default_value: ''),
+          FastlaneCore::ConfigItem.new(key: :community_token,
+                                       optional: true,
+                                       env_name: "FL_SAUCELABS_APPDIST_COMMUNITY_TOKEN",
+                                       description: "Custom URL token for the landing page",
+                                       default_value: ''),
+          FastlaneCore::ConfigItem.new(key: :app_description,
+                                       optional: true,
+                                       env_name: "FL_SAUCELABS_APPDIST_APP_DESCRIPTION",
+                                       description: "Description text to display on the landing page",
                                        default_value: '')
         ]
       end
