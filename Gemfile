@@ -2,4 +2,4 @@ source 'https://rubygems.org'
 
 gemspec name: 'fastlane-plugin-saucelabs_appdist'
 
-gem 'fastlane', path: '/Users/simon.sarrafi/Projects/fastlane'
+# fastlane comes from the gemspec's development dependency.
