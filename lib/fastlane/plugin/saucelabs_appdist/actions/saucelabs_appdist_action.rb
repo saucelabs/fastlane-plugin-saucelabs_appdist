@@ -102,7 +102,10 @@ module Fastlane
           when *PASSTHROUGH_PARAMS
             options[key] = value
           when :team_id
-            options[key] = value.to_s
+            # 0.3.2 sent no team_id field at all, so don't start sending an
+            # empty one: a server reading its presence as "filter by team"
+            # would reject an upload that used to work.
+            options[key] = value.to_s unless value.to_s.empty?
           when :testers_groups, :tags
             options[key] = Array(value).join(',')
           when :metrics
@@ -177,14 +180,17 @@ module Fastlane
         UI.important('Sauce Labs Mobile App Distribution ignores `platform` for .ipa, .apk and .aab uploads — it reads the platform from the binary. The param applies to generic uploads only.')
       end
 
-      # Keys the lane actually passed. Read this BEFORE `params.values`, which
-      # back-fills defaults into the very hash it reports as caller-supplied.
+      # Keys the caller supplied, by lane argument or by env var.
+      #
+      # Two channels, read separately on purpose. `_values` holds ONLY
+      # lane-passed values and must be read before `params.values` back-fills
+      # defaults into that same hash. Env values never enter `_values` at all —
+      # fastlane consults them later, inside `fetch` — so asking only `_values`
+      # makes every FL_SAUCELABS_APPDIST_* value read as absent.
       def self.provided_keys(params)
-        return params._values.keys if params.respond_to?(:_values)
-
-        # Older fastlane: fall back to "differs from its declared default",
-        # which cannot tell an explicit default from an absent value.
-        available_options.reject { |option| params[option.key] == option.default_value }.map(&:key)
+        available_options.select do |option|
+          params._values.key?(option.key) || !option.fetch_env_value.nil?
+        end.map(&:key)
       end
 
       # True when the lane passed the param and gave it a real value.
@@ -242,6 +248,9 @@ module Fastlane
         return false unless response.body.is_a?(Hash) && response.body['status'] == 'ok'
 
         Actions.lane_context[SharedValues::SAUCELABS_APPDIST_UPLOAD_RESPONSE] = response.body
+        # A retry that succeeds must not leave the earlier failure's envelope
+        # behind for a later reader to mistake for this upload's result.
+        Actions.lane_context.delete(SharedValues::SAUCELABS_APPDIST_UPLOAD_ERROR)
 
         true
       end
@@ -347,7 +356,7 @@ module Fastlane
           FastlaneCore::ConfigItem.new(key: :notify,
                                        optional: true,
                                        env_name: "FL_SAUCELABS_APPDIST_NOTIFY",
-                                       description: "Send email to testers. Can be 'on' or 'off'",
+                                       description: "Send email to testers. Can be 'on', 'off', '1' or '0'",
                                        default_value: 'off',
                                        verify_block: proc do |value|
                                          UI.user_error!("The notify flag can only be on, off, 1 or 0 — any other value silently notifies nobody") unless %w(on off 1 0).include?(value.to_s)

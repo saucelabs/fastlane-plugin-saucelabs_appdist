@@ -84,6 +84,10 @@ describe Fastlane::Actions::SaucelabsAppdistAction do
       expect(fields(team_id: 42)[:team_id]).to eq('42')
     end
 
+    it 'sends no team_id field at all when none was given' do
+      expect(fields.keys).not_to include(:team_id)
+    end
+
     it 'sends the legacy auto-update field name' do
       expect(fields(auto_update: 'on')['auto-update']).to eq('on')
     end
@@ -171,6 +175,68 @@ describe Fastlane::Actions::SaucelabsAppdistAction do
     end
   end
 
+  describe 'values supplied through env vars' do
+    around do |example|
+      @env_key = nil
+      example.run
+      ENV.delete(@env_key) if @env_key
+    end
+
+    def with_env(key, value)
+      @env_key = key
+      ENV[key] = value
+      fields
+    end
+
+    it 'honours the legacy community_token env var' do
+      result = with_env('FL_SAUCELABS_APPDIST_COMMUNITY_TOKEN', 'env-slug')
+
+      expect(result[:community_token]).to eq('env-slug')
+      expect(result[:landing_page_slug]).to eq('env-slug')
+    end
+
+    it 'honours the landing_page_slug env var' do
+      result = with_env('FL_SAUCELABS_APPDIST_LANDING_PAGE_SLUG', 'env-slug')
+
+      expect(result[:landing_page_slug]).to eq('env-slug')
+      expect(result[:community_token]).to eq('env-slug')
+    end
+
+    it 'honours the deprecated upload_to_saucelabs env var' do
+      allow(FastlaneCore::UI).to receive(:important)
+      result = with_env('FL_SAUCELABS_APPDIST_UPLOAD_TO_SAUCELABS', 'on')
+
+      expect(result[:sync_to_saucelabs]).to eq('on')
+      expect(result[:upload_to_saucelabs]).to eq('on')
+    end
+
+    it 'honours the sync_to_saucelabs env var' do
+      result = with_env('FL_SAUCELABS_APPDIST_SYNC_TO_SAUCELABS', 'on')
+
+      expect(result[:sync_to_saucelabs]).to eq('on')
+      expect(result[:upload_to_saucelabs]).to eq('on')
+    end
+
+    it 'warns about an ignored param supplied through its env var' do
+      @env_key = 'FL_SAUCELABS_APPDIST_CUSTOM'
+      ENV[@env_key] = 'legacy-only'
+
+      expect(FastlaneCore::UI).to receive(:important).with(/ignores `custom`/)
+      action.warn_ignored_params(config)
+    end
+
+    # Env values do go through the option's verify block — fastlane calls it
+    # inside ConfigItem#fetch_env_value — but only when the value is read, not
+    # at config creation. Either way the lane fails loud rather than notifying
+    # nobody.
+    it 'validates an env value, so a bad notify cannot slip through' do
+      @env_key = 'FL_SAUCELABS_APPDIST_NOTIFY'
+      ENV[@env_key] = 'true'
+
+      expect { fields }.to raise_error(FastlaneCore::Interface::FastlaneError, /notify flag can only be/)
+    end
+  end
+
   describe '#warn_ignored_params' do
     it 'warns for each param App Distribution ignores' do
       action::IGNORED_BY_APPDIST.each_key do |key|
@@ -225,6 +291,13 @@ describe Fastlane::Actions::SaucelabsAppdistAction do
       expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::SAUCELABS_APPDIST_UPLOAD_ERROR]).to eq(body)
     end
 
+    it 'clears a previous failure envelope once an upload succeeds' do
+      action.upload_error_message(double(status: 400, body: { 'status' => 'fail', 'code' => 136, 'message' => 'x' }))
+      action.send(:parse_response, double(status: 200, body: { 'status' => 'ok', 'build_id' => '1' }))
+
+      expect(Fastlane::Actions.lane_context[Fastlane::Actions::SharedValues::SAUCELABS_APPDIST_UPLOAD_ERROR]).to be_nil
+    end
+
     it 'falls back to the HTTP status when the body carries no code' do
       expect(action.upload_error_message(double(status: 502, body: '<html>bad gateway</html>')))
         .to match(/HTTP 502/)
@@ -240,6 +313,11 @@ describe Fastlane::Actions::SaucelabsAppdistAction do
     it 'rejects a notify value neither server acts on' do
       expect { config(notify: 'true') }
         .to raise_error(FastlaneCore::Interface::FastlaneError, /notify flag can only be/)
+    end
+
+    it 'describes notify the same way the verify block validates it' do
+      notify = action.available_options.find { |o| o.key == :notify }
+      %w(on off 1 0).each { |value| expect(notify.description).to include("'#{value}'") }
     end
 
     it 'accepts the notify values both servers act on' do
