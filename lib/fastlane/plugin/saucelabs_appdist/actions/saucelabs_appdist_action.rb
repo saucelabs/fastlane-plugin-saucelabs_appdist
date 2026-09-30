@@ -35,7 +35,9 @@ module Fastlane
 
       def self.upload_build(upload_url, ipa, options, timeout)
         require 'faraday'
-        require 'faraday_middleware'
+        require 'faraday/follow_redirects'
+        require 'faraday/multipart'
+        require 'faraday/retry'
 
         UI.success("Uploading to #{upload_url}...")
 
@@ -44,15 +46,15 @@ module Fastlane
           builder.request(:url_encoded)
           builder.request(:retry, max: 3, interval: 5)
           builder.response(:json, content_type: /\bjson$/)
-          builder.use(FaradayMiddleware::FollowRedirects)
+          builder.response(:follow_redirects)
           builder.adapter(:net_http)
         end
 
-        options[:file] = Faraday::UploadIO.new(ipa, 'application/octet-stream') if ipa && File.exist?(ipa)
+        options[:file] = Faraday::Multipart::FilePart.new(ipa, 'application/octet-stream') if ipa && File.exist?(ipa)
 
         symbols_file = options.delete(:symbols_file)
         if symbols_file
-          options[:symbols_file] = Faraday::UploadIO.new(symbols_file, 'application/octet-stream')
+          options[:symbols_file] = Faraday::Multipart::FilePart.new(symbols_file, 'application/octet-stream')
         end
 
         begin

@@ -304,6 +304,41 @@ describe Fastlane::Actions::SaucelabsAppdistAction do
     end
   end
 
+  describe '#upload_build' do
+    it 'posts the build as multipart over Faraday 2, retrying and following redirects' do
+      tmp_dsym = File.join(Dir.tmpdir, 'test.dSYM.zip')
+      File.write(tmp_dsym, 'dummy symbols')
+      posted = nil
+      middleware = nil
+
+      allow(Faraday).to receive(:new).and_wrap_original do |original, *args, &block|
+        connection = original.call(*args, &block)
+        middleware = connection.builder.handlers.map(&:klass)
+        allow(connection).to receive(:post) do |&request|
+          posted = connection.build_request(:post, &request)
+          double(status: 200, body: { 'status' => 'ok' })
+        end
+        connection
+      end
+
+      action.upload_build('https://app.testfairy.com', @tmp_ipa, { api_key: 'abc123', symbols_file: tmp_dsym }, 30)
+
+      expect(middleware).to include(Faraday::Multipart::Middleware, Faraday::Retry::Middleware, Faraday::FollowRedirects::Middleware)
+      expect(posted.path).to eq('/api/upload/')
+      expect(posted.options.timeout).to eq(30)
+      expect(posted.body[:file]).to be_a(Faraday::Multipart::FilePart)
+      expect(posted.body[:symbols_file]).to be_a(Faraday::Multipart::FilePart)
+      expect(posted.body[:api_key]).to eq('abc123')
+    ensure
+      File.delete(tmp_dsym) if File.exist?(tmp_dsym)
+    end
+
+    it 'treats an empty or non-JSON body as a failure instead of raising' do
+      expect(action.send(:parse_response, double(status: 401, body: ''))).to be(false)
+      expect(action.send(:parse_response, double(status: 401, body: nil))).to be(false)
+    end
+  end
+
   describe '#available_options' do
     it 'has the correct default upload_url' do
       upload_url_option = action.available_options.find { |o| o.key == :upload_url }
