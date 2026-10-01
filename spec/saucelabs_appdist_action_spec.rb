@@ -305,7 +305,7 @@ describe Fastlane::Actions::SaucelabsAppdistAction do
   end
 
   describe '#upload_build' do
-    it 'posts the build as multipart over Faraday 2, retrying and following redirects' do
+    it 'wires the multipart, retry and follow-redirects middleware and sends both files as FilePart' do
       tmp_dsym = File.join(Dir.tmpdir, 'test.dSYM.zip')
       File.write(tmp_dsym, 'dummy symbols')
       posted = nil
