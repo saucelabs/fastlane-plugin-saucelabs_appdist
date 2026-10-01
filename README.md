@@ -19,6 +19,12 @@ Or add the plugin manually to your project's `Pluginfile`:
 gem 'fastlane-plugin-saucelabs_appdist'
 ```
 
+Plugin 2.1.0 and later use Faraday 2 and need fastlane 2.238.0 or newer; the rubyzip path-traversal fix needs fastlane 2.240.0 or newer. An older fastlane keeps resolving plugin 2.0.0. A project already locked on fastlane 2.237 and plugin 2.0.0 stays there silently when only one gem is updated, so update both together:
+
+```sh
+bundle update fastlane fastlane-plugin-saucelabs_appdist
+```
+
 ## Usage
 
 ```ruby
